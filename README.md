@@ -1,7 +1,7 @@
 # ⚡ Sapienza-1005 ❤️  
 **Where Learning Meets Fun**  
 Challenge your mind, level up your skills, and dominate the leaderboard — all while playing exciting educational games.
-
+Website link: https://sapienza-1005.vercel.app
 ---
 
 ## 📖 Overview
@@ -29,8 +29,7 @@ You’ll earn ⚡ **Bolts** as rewards for your achievements, manage ❤️ **He
 
 | Frontend | Backend | Database | Tools |
 |----------|---------|----------|-------|
-| HTML, CSS, JavaScript (or React/Vue) | Node.js, Express | PostgreSQL / Neon | Git, GitHub, NPM |
-| (Add your actual frameworks here) |  |  |  |
+| NextJS | NextJS,  | PostgreSQL / Neon | Git, GitHub, NPM, Clerk, BotPress, Stripe, |
 
 ---
 
