@@ -10,10 +10,10 @@ import "./globals.css";
 const font = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lingo",
-  description: "Learn, practice, and master new languages with Lingo.",
+  title: "Sapienza",
+  description: "Intelligent Learning. Designed to Motivate.",
   icons: {
-    icon: ['/mascot.svg']
+    icon: ['/favicon.ico', '/mascot.svg'],
   }
 };
 
