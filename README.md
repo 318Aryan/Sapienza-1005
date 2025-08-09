@@ -29,12 +29,13 @@ You’ll earn ⚡ **Bolts** as rewards for your achievements, manage ❤️ **He
 
 | Frontend | Backend | Database | Tools |
 |----------|---------|----------|-------|
-| NextJS | NextJS,  | PostgreSQL / Neon | Git, GitHub, NPM, Clerk, BotPress, Stripe, |
+| NextJS | NextJS,  | PostgreSQL / Neon | Git, GitHub, NPM, Clerk, BotPress, Stripe, NeonDB |
 
 ---
 
 ## 🚀 Getting Started
-
+Visit: https://sapienza-1005.vercel.app
+or
 Follow these steps to set up **Sapienza-1005** locally:
 
 ```bash
