@@ -98,7 +98,7 @@ Each game is designed to be **short, addictive, and skill-building**.
 
 ## 🚀 Getting Started
 
-### Play Online  
+### Use Online  
 🔗 **Live Demo:** [https://sapienza-1005.vercel.app](https://sapienza-1005.vercel.app)
 
 ### Run Locally  
