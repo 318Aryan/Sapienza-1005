@@ -26,24 +26,26 @@ export const List = ({ courses, activeCourseId }: Props) => {
     }
 
     startTransition(() => {
-      upsertUserProgress(id)  
+      upsertUserProgress(id)
         .catch(() => toast.error("Something went wrong."));
     });
   };
 
   return (
-    <div className="pt-6 grid grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4">
-      {courses.map((course) => (
-        <Card
-          key={course.id}
-          id={course.id}
-          title={course.title}
-          imageSrc={course.imageSrc}
-          onClick={onClick}
-          disabled={pending}
-          active={course.id === activeCourseId}
-        />
-      ))}
-    </div>
+    <div className="pt-6 grid grid-cols-2 gap-4">
+  {courses.map((course) => (
+    <Card
+      key={course.id}
+      id={course.id}
+      title={course.title} // pass description prop here
+      imageSrc={course.imageSrc}
+      description="Testing" // pass description
+      onClick={onClick}
+      disabled={pending}
+      active={course.id === activeCourseId}
+    />
+  ))}
+</div>
+
   );
 };

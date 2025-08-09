@@ -3,13 +3,13 @@ import { eq } from "drizzle-orm";
 import { auth } from "@clerk/nextjs";
 
 import db from "@/db/drizzle";
-import { 
+import {
   challengeProgress,
-  courses, 
-  lessons, 
-  units, 
+  courses,
+  lessons,
+  units,
   userProgress,
-  userSubscription
+  userSubscription,
 } from "@/db/schema";
 
 export const getUserProgress = cache(async () => {
@@ -19,27 +19,40 @@ export const getUserProgress = cache(async () => {
     return null;
   }
 
-  const data = await db.query.userProgress.findFirst({
-    where: eq(userProgress.userId, userId),
-    with: {
-      activeCourse: true,
-    },
-  });
+  // Explicit join to get user progress + active course data
+  const data = await db
+    .select({
+      userId: userProgress.userId,
+      userName: userProgress.userName,
+      userImageSrc: userProgress.userImageSrc,
+      activeCourseId: userProgress.activeCourseId,
+      hearts: userProgress.hearts,
+      points: userProgress.points,
+      activeCourse: {
+        id: courses.id,
+        title: courses.title,
+        imageSrc: courses.imageSrc,
+      },
+    })
+    .from(userProgress)
+    .leftJoin(courses, eq(courses.id, userProgress.activeCourseId))
+    .where(eq(userProgress.userId, userId))
+    .limit(1);
 
-  return data;
+  return data.length > 0 ? data[0] : null;
 });
 
 export const getUnits = cache(async () => {
   const { userId } = await auth();
-  const userProgress = await getUserProgress();
+  const userProg = await getUserProgress();
 
-  if (!userId || !userProgress?.activeCourseId) {
+  if (!userId || !userProg?.activeCourseId) {
     return [];
   }
 
   const data = await db.query.units.findMany({
     orderBy: (units, { asc }) => [asc(units.order)],
-    where: eq(units.courseId, userProgress.activeCourseId),
+    where: eq(units.courseId, userProg.activeCourseId),
     with: {
       lessons: {
         orderBy: (lessons, { asc }) => [asc(lessons.order)],
@@ -48,10 +61,7 @@ export const getUnits = cache(async () => {
             orderBy: (challenges, { asc }) => [asc(challenges.order)],
             with: {
               challengeProgress: {
-                where: eq(
-                  challengeProgress.userId,
-                  userId,
-                ),
+                where: eq(challengeProgress.userId, userId),
               },
             },
           },
@@ -62,16 +72,16 @@ export const getUnits = cache(async () => {
 
   const normalizedData = data.map((unit) => {
     const lessonsWithCompletedStatus = unit.lessons.map((lesson) => {
-      if (
-        lesson.challenges.length === 0
-      ) {
+      if (lesson.challenges.length === 0) {
         return { ...lesson, completed: false };
       }
 
       const allCompletedChallenges = lesson.challenges.every((challenge) => {
-        return challenge.challengeProgress
-          && challenge.challengeProgress.length > 0
-          && challenge.challengeProgress.every((progress) => progress.completed);
+        return (
+          challenge.challengeProgress &&
+          challenge.challengeProgress.length > 0 &&
+          challenge.challengeProgress.every((progress) => progress.completed)
+        );
       });
 
       return { ...lesson, completed: allCompletedChallenges };
@@ -85,7 +95,6 @@ export const getUnits = cache(async () => {
 
 export const getCourses = cache(async () => {
   const data = await db.query.courses.findMany();
-
   return data;
 });
 
@@ -109,15 +118,15 @@ export const getCourseById = cache(async (courseId: number) => {
 
 export const getCourseProgress = cache(async () => {
   const { userId } = await auth();
-  const userProgress = await getUserProgress();
+  const userProg = await getUserProgress();
 
-  if (!userId || !userProgress?.activeCourseId) {
+  if (!userId || !userProg?.activeCourseId) {
     return null;
   }
 
   const unitsInActiveCourse = await db.query.units.findMany({
     orderBy: (units, { asc }) => [asc(units.order)],
-    where: eq(units.courseId, userProgress.activeCourseId),
+    where: eq(units.courseId, userProg.activeCourseId),
     with: {
       lessons: {
         orderBy: (lessons, { asc }) => [asc(lessons.order)],
@@ -139,9 +148,11 @@ export const getCourseProgress = cache(async () => {
     .flatMap((unit) => unit.lessons)
     .find((lesson) => {
       return lesson.challenges.some((challenge) => {
-        return !challenge.challengeProgress 
-          || challenge.challengeProgress.length === 0 
-          || challenge.challengeProgress.some((progress) => progress.completed === false)
+        return (
+          !challenge.challengeProgress ||
+          challenge.challengeProgress.length === 0 ||
+          challenge.challengeProgress.some((progress) => progress.completed === false)
+        );
       });
     });
 
@@ -186,14 +197,15 @@ export const getLesson = cache(async (id?: number) => {
   }
 
   const normalizedChallenges = data.challenges.map((challenge) => {
-    const completed = challenge.challengeProgress 
-      && challenge.challengeProgress.length > 0
-      && challenge.challengeProgress.every((progress) => progress.completed)
+    const completed =
+      challenge.challengeProgress &&
+      challenge.challengeProgress.length > 0 &&
+      challenge.challengeProgress.every((progress) => progress.completed);
 
     return { ...challenge, completed };
   });
 
-  return { ...data, challenges: normalizedChallenges }
+  return { ...data, challenges: normalizedChallenges };
 });
 
 export const getLessonPercentage = cache(async () => {
@@ -209,16 +221,14 @@ export const getLessonPercentage = cache(async () => {
     return 0;
   }
 
-  const completedChallenges = lesson.challenges
-    .filter((challenge) => challenge.completed);
-  const percentage = Math.round(
-    (completedChallenges.length / lesson.challenges.length) * 100,
-  );
+  const completedChallenges = lesson.challenges.filter((challenge) => challenge.completed);
+  const percentage = Math.round((completedChallenges.length / lesson.challenges.length) * 100);
 
   return percentage;
 });
 
 const DAY_IN_MS = 86_400_000;
+
 export const getUserSubscription = cache(async () => {
   const { userId } = await auth();
 
@@ -230,9 +240,8 @@ export const getUserSubscription = cache(async () => {
 
   if (!data) return null;
 
-  const isActive = 
-    data.stripePriceId &&
-    data.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS > Date.now();
+  const isActive =
+    data.stripePriceId && data.stripeCurrentPeriodEnd?.getTime()! + DAY_IN_MS > Date.now();
 
   return {
     ...data,

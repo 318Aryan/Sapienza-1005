@@ -40,15 +40,16 @@ export const PracticeModal = () => {
             Practice lesson
           </DialogTitle>
           <DialogDescription className="text-center text-base">
-            Use practice lessons to regain hearts and points. You cannot loose hearts or points in practice lessons.
+            Use practice lessons to learn and revise your topics. You cannot lose or gain
+            hearts or points in practice lessons.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="mb-4">
           <div className="flex flex-col gap-y-4 w-full">
             <Button
-              variant="primary" 
-              className="w-full" 
-              size="lg" 
+              variant="primary"
+              className="w-full"
+              size="lg"
               onClick={close}
             >
               I understand

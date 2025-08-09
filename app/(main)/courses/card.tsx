@@ -10,6 +10,7 @@ type Props = {
   onClick: (id: number) => void;
   disabled?: boolean;
   active?: boolean;
+  description?: string;  // Added description prop
 };
 
 export const Card = ({
@@ -19,6 +20,7 @@ export const Card = ({
   disabled,
   onClick,
   active,
+  description,  // Accept description
 }: Props) => {
   return (
     <div
@@ -42,9 +44,12 @@ export const Card = ({
         width={93.33}
         className="rounded-lg drop-shadow-md border object-cover"
       />
-      <p className="text-neutral-700 text-center font-bold mt-3">
-        {title}
-      </p>
+      <p className="text-neutral-700 text-center font-bold mt-3">{title}</p>
+      {description && (
+        <p className="text-neutral-600 text-center mt-1 text-sm">
+          {description}
+        </p>
+      )}
     </div>
   );
 };

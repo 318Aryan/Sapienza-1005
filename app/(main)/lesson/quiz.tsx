@@ -42,6 +42,7 @@ export const Quiz = ({
   const { open: openHeartsModal } = useHeartsModal();
   const { open: openPracticeModal } = usePracticeModal();
 
+
   useMount(() => {
     if (initialPercentage === 100) {
       openPracticeModal();
@@ -204,7 +205,7 @@ export const Quiz = ({
     );
   }
 
-  const title = challenge.type === "ASSIST" 
+  const title = challenge.type === "ASSIST"
     ? "Select the correct meaning"
     : challenge.question;
 

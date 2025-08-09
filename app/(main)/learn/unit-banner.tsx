@@ -22,14 +22,14 @@ export const UnitBanner = ({
           {description}
         </p>
       </div>
-      <Link href="/lesson">
+      <Link href="https://drive.google.com/drive/folders/1hhpmdyM2tddHH4Fge2OxD31XQbPS1YfR?usp=sharing">
         <Button
           size="lg"
           variant="secondary"
           className="hidden xl:flex border-2 border-b-4 active:border-b-2"
         >
           <NotebookText className="mr-2" />
-          Continue
+          Resources
         </Button>
       </Link>
     </div>

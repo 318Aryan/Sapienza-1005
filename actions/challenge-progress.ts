@@ -12,7 +12,7 @@ export const upsertChallengeProgress = async (challengeId: number) => {
   const { userId } = await auth();
 
   if (!userId) {
-    throw new Error("Unauthorized"); 
+    throw new Error("Unauthorized");
   }
 
   const currentUserProgress = await getUserProgress();
@@ -42,8 +42,8 @@ export const upsertChallengeProgress = async (challengeId: number) => {
   const isPractice = !!existingChallengeProgress;
 
   if (
-    currentUserProgress.hearts === 0 && 
-    !isPractice && 
+    currentUserProgress.hearts === 0 &&
+    !isPractice &&
     !userSubscription?.isActive
   ) {
     return { error: "hearts" };
@@ -58,8 +58,8 @@ export const upsertChallengeProgress = async (challengeId: number) => {
     );
 
     await db.update(userProgress).set({
-      hearts: Math.min(currentUserProgress.hearts + 1, 5),
-      points: currentUserProgress.points + 10,
+      hearts: currentUserProgress.hearts,
+      points: currentUserProgress.points,
     }).where(eq(userProgress.userId, userId));
 
     revalidatePath("/learn");
