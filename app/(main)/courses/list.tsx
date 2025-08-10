@@ -39,7 +39,7 @@ export const List = ({ courses, activeCourseId }: Props) => {
       id={course.id}
       title={course.title} // pass description prop here
       imageSrc={course.imageSrc}
-      description="Testing" // pass description
+      description="" // pass description
       onClick={onClick}
       disabled={pending}
       active={course.id === activeCourseId}
